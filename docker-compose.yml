@@ -6,28 +6,31 @@ services:
     command: bash -c "rm -f tmp/pids/server.pid && bin/setup && bundle exec rails s -p 3007 -b '0.0.0.0'"
     volumes:
       - .:/acquirer_app
-      - rubygems:/usr/local/bundle
+      - acquirer_gems:/usr/local/bundle
     ports:
       - "3007:3007"
     depends_on:
-      - postgres
+      - acquirer_db
     networks:
       - policy-network
-  postgres:
-    hostname: acquirer_db
+  acquirer_db:
+    container_name: acquirer_db
     image: postgres:16
     volumes:
-      - database:/var/lib/postgresql/data
+      - acquirer_db:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
+      # POSTGRES_PORT: 5435
+    ports:
+      - "5435:5432"
     networks:
       - policy-network
 
 volumes:
-  database:
-  rubygems:
+  acquirer_db:
+  acquirer_gems:
 
 networks:
   policy-network:
